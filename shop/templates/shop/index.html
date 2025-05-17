@@ -103,24 +103,22 @@
 
 {% block js %}
 <script>
-// finding out cart items from local storage
 if(localStorage.getItem('cart') == null){
 var cart = {};
 }
 else
 {
 cart = JSON.parse(localStorage.getItem('cart'));
-//document.getElementById('cart').innerHTML = Object.keys(cart).length;
 let itemCount = 0;
 for (let key in cart) {
     if (cart[key] > 0) {
-        itemCount += 1;
+        itemCount += cart[key];
     }
 }
 document.getElementById('cart').innerHTML = itemCount;
-
-updateCart(cart);
+localStorage.setItem('cart', JSON.stringify(cart));
 }
+
 //if add to cart button is clicked then add or inncrement the item
 $('.cart').click(function(){
 var idstr = this.id.toString();
