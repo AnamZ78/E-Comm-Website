@@ -66,7 +66,7 @@
 
         {% for i in product %}
         <div class="col-xs-3 col-sm-3 col-md-3">
-          <div class="card" style="width: 18rem;">
+          <div class="card align-items-center" style="width: 18rem;">
             <img src='/media/{{i.image}}' class="card-img-top" alt="...">
             <div class="card-body">
               <h5 class="card-title">{{i.product_name}}</h5>
@@ -110,24 +110,31 @@ var cart = {};
 else
 {
 cart = JSON.parse(localStorage.getItem('cart'));
-document.getElementById('cart').innerHTML = Object.keys(cart).length;
+//document.getElementById('cart').innerHTML = Object.keys(cart).length;
+let itemCount = 0;
+for (let key in cart) {
+    if (cart[key] > 0) {
+        itemCount += 1;
+    }
+}
+document.getElementById('cart').innerHTML = itemCount;
+
 updateCart(cart);
 }
 //if add to cart button is clicked then add or inncrement the item
 $('.cart').click(function(){
-console.log('clicked');
 var idstr = this.id.toString();
 console.log(idstr);
-if (cart[idstr] !=undefined && ifExists(cart[idstr]) ){
+if (cart[idstr] !=undefined ){
 cart[idstr] = cart[idstr] + 1;
 }
 else
 {
 cart[idstr] = 1;
 }
+updateCart(cart);
 console.log(cart);
-localStorage.setItem('cart', JSON.stringify(cart));
-document.getElementById('cart').innerHTML = Object.keys(cart).length;
+
 });
 
 //add popover to the cart
@@ -135,11 +142,62 @@ $('#popcart').popover();
 document.getElementById("popcart").setAttribute('data-content', '<h5>Cart for your items in my shopping cart</h5>');
 
 //
-function updateCart(cart){
+{% comment %} function updateCart(cart){
   for (var item in cart){
-    document.getElementById('div' + item).innerHTML = "<button id ='minus" + item + "' class = 'btn btn-primary minus'>-</button> <span id ='val'" +item + "''>" +cart[item ]+ "<span><button id='plus" +item +"' class= 'btn btn-primary plus'>+</button>";
+    document.getElementById('div' + item).innerHTML = "<button id='minus" + item + "' class='btn btn-primary minus'>-</button> " +
+    "<span id='val" + item + "'>" + cart[item] + "</span> " +
+    "<button id='plus" + item + "' class='btn btn-primary plus'>+</button>";
    }
+   localStorage.setItem('cart', JSON.stringify(cart));
+   document.getElementById('cart').innerHTML = Object.keys(cart).length;
+} {% endcomment %}
+
+function updateCart(cart){
+  for (let item in cart){
+      let element = document.getElementById('div' + item);
+      if (element) {
+          element.innerHTML =
+              "<button id='minus" + item + "' class='btn btn-primary minus'>-</button> " +
+              "<span id='val" + item + "'>" + cart[item] + "</span> " +
+              "<button id='plus" + item + "' class='btn btn-primary plus'>+</button>";
+      }
+  }
+
+  Object.keys(localStorage.getItem('cart') ? JSON.parse(localStorage.getItem('cart')) : {}).forEach(item => {
+      if (!(item in cart)) {
+          let element = document.getElementById('div' + item);
+          if (element) {
+              element.innerHTML = "<button id='" + item + "' class='btn btn-primary cart'>Add To Cart</button>";
+          }
+      }
+  });
+
+  localStorage.setItem('cart', JSON.stringify(cart));
+  document.getElementById('cart').innerHTML = Object.keys(cart).length;
 }
-//
+
+//adding functionality to the plus and minus button
+$('.divpr').on("click", "button.plus", function(){
+  a= this.id.slice(6, );
+  cart['pr' + a] = cart['pr' + a] + 1;
+  document.getElementById('valpr' + a).innerHTML = cart['pr' + a];
+  updateCart(cart);
+});
+
+
+$('.divpr').on("click", "button.minus", function(){
+  let a = this.id.slice(7);
+  let itemId = 'pr' + a;
+
+  if (cart[itemId] > 1) {
+      cart[itemId] -= 1;
+  } else {
+      delete cart[itemId]; 
+  }
+
+  updateCart(cart);
+});
+
+
 </script>
 {% endblock %}
