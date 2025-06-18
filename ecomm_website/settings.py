@@ -57,7 +57,7 @@ ROOT_URLCONF = 'ecomm_website.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['ecomm_website/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
